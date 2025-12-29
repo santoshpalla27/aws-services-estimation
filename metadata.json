@@ -1,5 +1,0 @@
-{
-  "name": "AWS Cost Estimator Console",
-  "description": "A high-fidelity replica of the AWS Console for estimating infrastructure costs with a modular architecture and real-time pricing calculation.",
-  "requestFramePermissions": []
-}
