@@ -13,7 +13,7 @@ export enum ServiceType {
   EKS = "AmazonEKS",
   LAMBDA = "AWSLambda",
   ELASTIC_BEANSTALK = "ElasticBeanstalk",
-  
+
   // Storage
   S3 = "AmazonS3",
   EBS = "AmazonEBS",
@@ -22,14 +22,14 @@ export enum ServiceType {
   S3_GLACIER = "AmazonS3GlacierDeepArchive",
   BACKUP = "AWSBackup",
   ELASTIC_DR = "AWSElasticDisasterRecovery",
-  
+
   // Database
   RDS = "AmazonRDS",
   DYNAMODB = "AmazonDynamoDB",
   ELASTICACHE = "AmazonElastiCache",
   NEPTUNE = "AmazonNeptune",
   REDSHIFT = "AmazonRedshift",
-  
+
   // Networking
   VPC = "AmazonVPC",
   ROUTE53 = "AmazonRoute53",
@@ -38,7 +38,7 @@ export enum ServiceType {
   ELB = "AWSELB",
   GLOBAL_ACCELERATOR = "AWSGlobalAccelerator",
   DATA_TRANSFER = "AWSDataTransfer",
-  
+
   // Security
   IAM = "AWSIdentityAccessManagement",
   KMS = "awskms",
@@ -47,7 +47,7 @@ export enum ServiceType {
   SECRETS_MANAGER = "AWSSecretsManager",
   ACM = "ACM", // Certificate Manager
   FMS = "AWSFMS", // Firewall Manager
-  
+
   // Management & Gov
   CLOUDWATCH = "AmazonCloudWatch",
   CLOUDTRAIL = "AWSCloudTrail",
@@ -56,7 +56,7 @@ export enum ServiceType {
   SERVICE_CATALOG = "AWSServiceCatalog",
   CLOUDFORMATION = "AWSCloudFormation",
   XRAY = "AWSXRay",
-  
+
   // App Integration
   SNS = "AmazonSNS",
   SQS = "AWSQueueService",
@@ -64,22 +64,22 @@ export enum ServiceType {
   STEP_FUNCTIONS = "AmazonStates",
   EVENTBRIDGE = "AWSEvents",
   MSK = "AmazonMSK",
-  
+
   // Analytics
   KINESIS = "AmazonKinesis",
   OPENSEARCH = "AmazonOpenSearchService",
-  
+
   // Developer Tools
   CODEBUILD = "CodeBuild",
   CODECOMMIT = "AWSCodeCommit",
   CODEDEPLOY = "AWSCodeDeploy",
   CODEPIPELINE = "AWSCodePipeline",
   CODEARTIFACT = "AWSCodeArtifact",
-  
+
   // Containers
   ECR = "AmazonECR",
   ECR_PUBLIC = "AmazonECRPublic",
-  
+
   // Customer Engagement
   SES = "AmazonSES",
   PINPOINT = "AmazonPinpoint",
@@ -322,6 +322,10 @@ export interface ResourceConfig {
   name: string;
   region: Region;
   attributes: {
+    // --- New Nested Schemas (V2) ---
+    // These are optional and coexist with flat attributes for backward compatibility
+    eks?: import('./types/schemas/eks.schema').EKSClusterSchema;
+    vpc?: import('./types/schemas/vpc.schema').VPCSchema;
     // --- VPC Attributes ---
     availabilityZones: number;
     publicSubnetsPerAZ: number;
@@ -335,7 +339,7 @@ export interface ResourceConfig {
     clientVpnEnabled: boolean;
     clientVpnAssociations: number;
     clientVpnActiveConnections: number;
-    natGateways: number; 
+    natGateways: number;
     publicIps: number;
     vpcEndpointsInterface: number;
     enableS3GatewayEndpoint: boolean;
@@ -374,7 +378,7 @@ export interface ResourceConfig {
     utilizationHours: number; // Hours per month (max 730)
     enableSpotInstances: boolean;
     spotDiscountPercentage: number; // Estimated %
-    
+
     // --- S3 Attributes ---
     s3StandardStorage: number; // GB
     s3InfrequentAccessStorage: number; // GB
@@ -717,7 +721,7 @@ export interface ResourceConfig {
     pinpointEvents: number; // Millions
     pinpointPushNotifs: number; // Millions
     pinpointEmails: number; // Thousands
-  }; 
+  };
 }
 
 // Pricing Data Structure

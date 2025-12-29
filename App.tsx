@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ResourceConfig, ServiceType, Region, NatGatewayStrategy, InstanceFamily, InstanceType, Tenancy, EbsVolumeType, LoadBalancerType, LambdaArchitecture, RDSEngine, RDSInstanceClass, RDSDeploymentOption, ApiGatewayType, ApiGatewayCacheSize, CloudFrontPriceClass, DynamoDBCapacityMode, DynamoDBTableClass, AcmCertificateType, OpenSearchInstanceType, ECSLaunchType, FargatePlatform, EFSThroughputMode, ElastiCacheEngine, ElastiCacheNodeType, WafScope, MSKBrokerNodeType, AmazonMQEngine, AmazonMQDeploymentMode, AmazonMQInstanceType, ShieldProtectionType, KinesisStreamMode, CodeBuildComputeType, CodeBuildOs, FSxType, FSxDeploymentType, StepFunctionsType } from './types';
-import { VPCArchitectureConfig, VPCUsageConfig } from './components/modules/VPCModule';
+import { VPCArchitectureConfigV2 as VPCArchitectureConfig, VPCUsageConfigV2 as VPCUsageConfig } from './components/modules/VPCModuleV2';
 import { EC2ArchitectureConfig, EC2UsageConfig } from './components/modules/EC2Module';
 import { S3ArchitectureConfig, S3UsageConfig } from './components/modules/S3Module';
 import { CloudWatchArchitectureConfig, CloudWatchUsageConfig } from './components/modules/CloudWatchModule';
@@ -16,7 +16,7 @@ import { CloudTrailArchitectureConfig, CloudTrailUsageConfig } from './component
 import { ECRArchitectureConfig, ECRUsageConfig } from './components/modules/ECRModule';
 import { ECSArchitectureConfig, ECSUsageConfig } from './components/modules/ECSModule';
 import { EFSArchitectureConfig, EFSUsageConfig } from './components/modules/EFSModule';
-import { EKSArchitectureConfig, EKSUsageConfig } from './components/modules/EKSModule';
+import { EKSArchitectureConfigV2 as EKSArchitectureConfig, EKSUsageConfigV2 as EKSUsageConfig } from './components/modules/EKSModuleV2';
 import { ElastiCacheArchitectureConfig, ElastiCacheUsageConfig } from './components/modules/ElastiCacheModule';
 import { WAFArchitectureConfig, WAFUsageConfig } from './components/modules/WAFModule';
 import { SystemsManagerArchitectureConfig, SystemsManagerUsageConfig } from './components/modules/SystemsManagerModule';
@@ -56,16 +56,16 @@ import { AWSButton, AWSSelect } from './components/ui/AWS';
 
 // --- Service Categorization ---
 const SERVICE_GROUPS: Record<string, ServiceType[]> = {
-  "Compute": [ServiceType.EC2, ServiceType.ASG, ServiceType.LAMBDA, ServiceType.ECS, ServiceType.EKS],
-  "Storage": [ServiceType.S3, ServiceType.EFS, ServiceType.FSX, ServiceType.S3_GLACIER, ServiceType.ECR, ServiceType.ECR_PUBLIC, ServiceType.BACKUP, ServiceType.ELASTIC_DR],
-  "Database": [ServiceType.RDS, ServiceType.DYNAMODB, ServiceType.ELASTICACHE],
-  "Networking & Content Delivery": [ServiceType.VPC, ServiceType.ELB, ServiceType.ROUTE53, ServiceType.API_GATEWAY, ServiceType.CLOUDFRONT, ServiceType.GLOBAL_ACCELERATOR, ServiceType.DATA_TRANSFER],
-  "Developer Tools": [ServiceType.CODECOMMIT, ServiceType.CODEBUILD, ServiceType.CODEDEPLOY, ServiceType.CODEPIPELINE, ServiceType.CODEARTIFACT, ServiceType.XRAY],
-  "Application Integration": [ServiceType.SNS, ServiceType.SQS, ServiceType.MQ, ServiceType.STEP_FUNCTIONS, ServiceType.EVENTBRIDGE],
-  "Security, Identity, & Compliance": [ServiceType.IAM, ServiceType.WAF, ServiceType.KMS, ServiceType.SECRETS_MANAGER, ServiceType.ACM, ServiceType.SHIELD, ServiceType.FMS],
-  "Management & Governance": [ServiceType.CLOUDWATCH, ServiceType.CLOUDTRAIL, ServiceType.SYSTEMS_MANAGER, ServiceType.CLOUDFORMATION, ServiceType.CONFIG],
-  "Analytics": [ServiceType.OPENSEARCH, ServiceType.MSK, ServiceType.KINESIS],
-  "Customer Engagement": [ServiceType.SES, ServiceType.PINPOINT]
+    "Compute": [ServiceType.EC2, ServiceType.ASG, ServiceType.LAMBDA, ServiceType.ECS, ServiceType.EKS],
+    "Storage": [ServiceType.S3, ServiceType.EFS, ServiceType.FSX, ServiceType.S3_GLACIER, ServiceType.ECR, ServiceType.ECR_PUBLIC, ServiceType.BACKUP, ServiceType.ELASTIC_DR],
+    "Database": [ServiceType.RDS, ServiceType.DYNAMODB, ServiceType.ELASTICACHE],
+    "Networking & Content Delivery": [ServiceType.VPC, ServiceType.ELB, ServiceType.ROUTE53, ServiceType.API_GATEWAY, ServiceType.CLOUDFRONT, ServiceType.GLOBAL_ACCELERATOR, ServiceType.DATA_TRANSFER],
+    "Developer Tools": [ServiceType.CODECOMMIT, ServiceType.CODEBUILD, ServiceType.CODEDEPLOY, ServiceType.CODEPIPELINE, ServiceType.CODEARTIFACT, ServiceType.XRAY],
+    "Application Integration": [ServiceType.SNS, ServiceType.SQS, ServiceType.MQ, ServiceType.STEP_FUNCTIONS, ServiceType.EVENTBRIDGE],
+    "Security, Identity, & Compliance": [ServiceType.IAM, ServiceType.WAF, ServiceType.KMS, ServiceType.SECRETS_MANAGER, ServiceType.ACM, ServiceType.SHIELD, ServiceType.FMS],
+    "Management & Governance": [ServiceType.CLOUDWATCH, ServiceType.CLOUDTRAIL, ServiceType.SYSTEMS_MANAGER, ServiceType.CLOUDFORMATION, ServiceType.CONFIG],
+    "Analytics": [ServiceType.OPENSEARCH, ServiceType.MSK, ServiceType.KINESIS],
+    "Customer Engagement": [ServiceType.SES, ServiceType.PINPOINT]
 };
 
 const getServiceDisplayName = (type: ServiceType): string => {
@@ -174,8 +174,8 @@ const DEFAULT_VPC_ATTRIBUTES = {
     enableEgressOnlyInternetGateway: false,
     enableDnsHostnames: true,
     enableDnsSupport: true,
-    natGateways: 1, 
-    publicIps: 3, 
+    natGateways: 1,
+    publicIps: 3,
     vpnConnections: 0,
     clientVpnEnabled: false,
     clientVpnAssociations: 1,
@@ -515,472 +515,472 @@ const DEFAULT_MSK_ATTRIBUTES = {
 };
 
 const INITIAL_CONFIG: ResourceConfig = {
-  id: 'temp-1',
-  serviceType: ServiceType.VPC,
-  name: 'Primary VPC',
-  region: Region.US_EAST_1,
-  attributes: { ...DEFAULT_VPC_ATTRIBUTES }
+    id: 'temp-1',
+    serviceType: ServiceType.VPC,
+    name: 'Primary VPC',
+    region: Region.US_EAST_1,
+    attributes: { ...DEFAULT_VPC_ATTRIBUTES }
 };
 
 const App: React.FC = () => {
-  const [view, setView] = useState<'editor' | 'project'>('editor');
-  const [projectResources, setProjectResources] = useState<ResourceConfig[]>([]);
-  const [activeResource, setActiveResource] = useState<ResourceConfig>(INITIAL_CONFIG);
-  const [isAnnual, setIsAnnual] = useState(false);
+    const [view, setView] = useState<'editor' | 'project'>('editor');
+    const [projectResources, setProjectResources] = useState<ResourceConfig[]>([]);
+    const [activeResource, setActiveResource] = useState<ResourceConfig>(INITIAL_CONFIG);
+    const [isAnnual, setIsAnnual] = useState(false);
 
-  // Derive available VPCs for linking (EC2 Dependency)
-  const availableVpcs = useMemo(() => 
-    projectResources
-        .filter(r => r.serviceType === ServiceType.VPC)
-        .map(r => ({ id: r.id, name: r.name })),
-    [projectResources]
-  );
+    // Derive available VPCs for linking (EC2 Dependency)
+    const availableVpcs = useMemo(() =>
+        projectResources
+            .filter(r => r.serviceType === ServiceType.VPC)
+            .map(r => ({ id: r.id, name: r.name })),
+        [projectResources]
+    );
 
-  const handleServiceChange = (service: ServiceType) => {
-      if (service === activeResource.serviceType) return;
-      
-      let defaults = DEFAULT_VPC_ATTRIBUTES;
-      let name = 'Primary VPC';
-      
-      if (service === ServiceType.EC2) {
-          name = 'My Web Fleet';
-      } else if (service === ServiceType.ASG) {
-          name = 'Auto Scaling Group';
-      } else if (service === ServiceType.ELB) {
-          name = 'Load Balancer';
-      } else if (service === ServiceType.S3) {
-          name = 'Data Bucket';
-      } else if (service === ServiceType.CLOUDWATCH) {
-          name = 'Project Monitoring';
-      } else if (service === ServiceType.ROUTE53) {
-          name = 'My DNS Config';
-      } else if (service === ServiceType.LAMBDA) {
-          name = 'My Function';
-      } else if (service === ServiceType.RDS) {
-          name = 'Primary DB';
-      } else if (service === ServiceType.API_GATEWAY) {
-          name = 'My API';
-      } else if (service === ServiceType.CLOUDFRONT) {
-          name = 'My Distribution';
-      } else if (service === ServiceType.DYNAMODB) {
-          name = 'My Table';
-      } else if (service === ServiceType.ACM) {
-          name = 'My Certificate';
-      } else if (service === ServiceType.OPENSEARCH) {
-          name = 'My Search Domain';
-      } else if (service === ServiceType.CLOUDTRAIL) {
-          name = 'Trail Configuration';
-      } else if (service === ServiceType.ECR) {
-          name = 'Private Registry';
-      } else if (service === ServiceType.ECR_PUBLIC) {
-          name = 'Public Registry';
-      } else if (service === ServiceType.ECS) {
-          name = 'My Cluster';
-      } else if (service === ServiceType.EFS) {
-          name = 'My File System';
-      } else if (service === ServiceType.EKS) {
-          name = 'My K8s Cluster';
-      } else if (service === ServiceType.ELASTICACHE) {
-          name = 'My Cache';
-      } else if (service === ServiceType.WAF) {
-          name = 'My Web ACL';
-      } else if (service === ServiceType.SYSTEMS_MANAGER) {
-          name = 'My Systems Manager';
-      } else if (service === ServiceType.SECRETS_MANAGER) {
-          name = 'My Secrets';
-      } else if (service === ServiceType.KMS) {
-          name = 'My Keys';
-      } else if (service === ServiceType.CLOUDFORMATION) {
-          name = 'My Stack';
-      } else if (service === ServiceType.MSK) {
-          defaults = DEFAULT_MSK_ATTRIBUTES;
-          name = 'My Kafka Cluster';
-      } else if (service === ServiceType.SNS) {
-          name = 'My Topic';
-      } else if (service === ServiceType.SQS) {
-          name = 'My Queue';
-      } else if (service === ServiceType.SES) {
-          name = 'My Email Identity';
-      } else if (service === ServiceType.MQ) {
-          name = 'My Broker';
-      } else if (service === ServiceType.SHIELD) {
-          name = 'Shield Protection';
-      } else if (service === ServiceType.CONFIG) {
-          name = 'Config Recorder';
-      } else if (service === ServiceType.IAM) {
-          name = 'Identity Management';
-      } else if (service === ServiceType.KINESIS) {
-          name = 'My Data Stream';
-      } else if (service === ServiceType.EVENTBRIDGE) {
-          name = 'My Event Bus';
-      } else if (service === ServiceType.ELASTIC_DR) {
-          name = 'My DR Project';
-      } else if (service === ServiceType.CODEARTIFACT) {
-          name = 'My Artifact Repo';
-      } else if (service === ServiceType.CODEBUILD) {
-          name = 'My Build Project';
-      } else if (service === ServiceType.CODECOMMIT) {
-          name = 'My Git Repo';
-      } else if (service === ServiceType.CODEDEPLOY) {
-          name = 'My Deploy App';
-      } else if (service === ServiceType.CODEPIPELINE) {
-          name = 'My Pipeline';
-      } else if (service === ServiceType.DATA_TRANSFER) {
-          name = 'Aggregate Data Transfer';
-      } else if (service === ServiceType.GLOBAL_ACCELERATOR) {
-          name = 'My Accelerator';
-      } else if (service === ServiceType.FMS) {
-          name = 'My Firewall Manager';
-      } else if (service === ServiceType.BACKUP) {
-          name = 'My Backup Vault';
-      } else if (service === ServiceType.FSX) {
-          name = 'My File System';
-      } else if (service === ServiceType.S3_GLACIER) {
-          name = 'My Glacier Vault';
-      } else if (service === ServiceType.STEP_FUNCTIONS) {
-          name = 'My Workflow';
-      } else if (service === ServiceType.XRAY) {
-          name = 'App Tracing';
-      } else if (service === ServiceType.PINPOINT) {
-          name = 'Engagement Project';
-      }
+    const handleServiceChange = (service: ServiceType) => {
+        if (service === activeResource.serviceType) return;
 
-      setActiveResource({
-          ...activeResource,
-          id: `temp-${Date.now()}`,
-          serviceType: service,
-          name: name,
-          attributes: { ...defaults }
-      });
-  };
+        let defaults = DEFAULT_VPC_ATTRIBUTES;
+        let name = 'Primary VPC';
 
-  const addToProject = () => {
-    const newResource = {
-        ...activeResource,
-        id: `res-${Date.now()}` // Generate permanent ID
+        if (service === ServiceType.EC2) {
+            name = 'My Web Fleet';
+        } else if (service === ServiceType.ASG) {
+            name = 'Auto Scaling Group';
+        } else if (service === ServiceType.ELB) {
+            name = 'Load Balancer';
+        } else if (service === ServiceType.S3) {
+            name = 'Data Bucket';
+        } else if (service === ServiceType.CLOUDWATCH) {
+            name = 'Project Monitoring';
+        } else if (service === ServiceType.ROUTE53) {
+            name = 'My DNS Config';
+        } else if (service === ServiceType.LAMBDA) {
+            name = 'My Function';
+        } else if (service === ServiceType.RDS) {
+            name = 'Primary DB';
+        } else if (service === ServiceType.API_GATEWAY) {
+            name = 'My API';
+        } else if (service === ServiceType.CLOUDFRONT) {
+            name = 'My Distribution';
+        } else if (service === ServiceType.DYNAMODB) {
+            name = 'My Table';
+        } else if (service === ServiceType.ACM) {
+            name = 'My Certificate';
+        } else if (service === ServiceType.OPENSEARCH) {
+            name = 'My Search Domain';
+        } else if (service === ServiceType.CLOUDTRAIL) {
+            name = 'Trail Configuration';
+        } else if (service === ServiceType.ECR) {
+            name = 'Private Registry';
+        } else if (service === ServiceType.ECR_PUBLIC) {
+            name = 'Public Registry';
+        } else if (service === ServiceType.ECS) {
+            name = 'My Cluster';
+        } else if (service === ServiceType.EFS) {
+            name = 'My File System';
+        } else if (service === ServiceType.EKS) {
+            name = 'My K8s Cluster';
+        } else if (service === ServiceType.ELASTICACHE) {
+            name = 'My Cache';
+        } else if (service === ServiceType.WAF) {
+            name = 'My Web ACL';
+        } else if (service === ServiceType.SYSTEMS_MANAGER) {
+            name = 'My Systems Manager';
+        } else if (service === ServiceType.SECRETS_MANAGER) {
+            name = 'My Secrets';
+        } else if (service === ServiceType.KMS) {
+            name = 'My Keys';
+        } else if (service === ServiceType.CLOUDFORMATION) {
+            name = 'My Stack';
+        } else if (service === ServiceType.MSK) {
+            defaults = DEFAULT_MSK_ATTRIBUTES;
+            name = 'My Kafka Cluster';
+        } else if (service === ServiceType.SNS) {
+            name = 'My Topic';
+        } else if (service === ServiceType.SQS) {
+            name = 'My Queue';
+        } else if (service === ServiceType.SES) {
+            name = 'My Email Identity';
+        } else if (service === ServiceType.MQ) {
+            name = 'My Broker';
+        } else if (service === ServiceType.SHIELD) {
+            name = 'Shield Protection';
+        } else if (service === ServiceType.CONFIG) {
+            name = 'Config Recorder';
+        } else if (service === ServiceType.IAM) {
+            name = 'Identity Management';
+        } else if (service === ServiceType.KINESIS) {
+            name = 'My Data Stream';
+        } else if (service === ServiceType.EVENTBRIDGE) {
+            name = 'My Event Bus';
+        } else if (service === ServiceType.ELASTIC_DR) {
+            name = 'My DR Project';
+        } else if (service === ServiceType.CODEARTIFACT) {
+            name = 'My Artifact Repo';
+        } else if (service === ServiceType.CODEBUILD) {
+            name = 'My Build Project';
+        } else if (service === ServiceType.CODECOMMIT) {
+            name = 'My Git Repo';
+        } else if (service === ServiceType.CODEDEPLOY) {
+            name = 'My Deploy App';
+        } else if (service === ServiceType.CODEPIPELINE) {
+            name = 'My Pipeline';
+        } else if (service === ServiceType.DATA_TRANSFER) {
+            name = 'Aggregate Data Transfer';
+        } else if (service === ServiceType.GLOBAL_ACCELERATOR) {
+            name = 'My Accelerator';
+        } else if (service === ServiceType.FMS) {
+            name = 'My Firewall Manager';
+        } else if (service === ServiceType.BACKUP) {
+            name = 'My Backup Vault';
+        } else if (service === ServiceType.FSX) {
+            name = 'My File System';
+        } else if (service === ServiceType.S3_GLACIER) {
+            name = 'My Glacier Vault';
+        } else if (service === ServiceType.STEP_FUNCTIONS) {
+            name = 'My Workflow';
+        } else if (service === ServiceType.XRAY) {
+            name = 'App Tracing';
+        } else if (service === ServiceType.PINPOINT) {
+            name = 'Engagement Project';
+        }
+
+        setActiveResource({
+            ...activeResource,
+            id: `temp-${Date.now()}`,
+            serviceType: service,
+            name: name,
+            attributes: { ...defaults }
+        });
     };
-    setProjectResources([...projectResources, newResource]);
-    setView('project');
-    
-    let nextName = 'New Resource';
-    // Simplified name resetting
-    setActiveResource({
-        ...activeResource,
-        id: `temp-${Date.now() + 1}`,
-        name: nextName
-    });
-  };
 
-  const removeResource = (id: string) => {
-      setProjectResources(projectResources.filter(r => r.id !== id));
-  };
+    const addToProject = () => {
+        const newResource = {
+            ...activeResource,
+            id: `res-${Date.now()}` // Generate permanent ID
+        };
+        setProjectResources([...projectResources, newResource]);
+        setView('project');
 
-  const editResource = (resource: ResourceConfig) => {
-      setActiveResource({ ...resource }); 
-      setProjectResources(projectResources.filter(r => r.id !== resource.id));
-      setView('editor');
-  };
+        let nextName = 'New Resource';
+        // Simplified name resetting
+        setActiveResource({
+            ...activeResource,
+            id: `temp-${Date.now() + 1}`,
+            name: nextName
+        });
+    };
 
-  const estimation = useMemo(() => calculateResourceCost(activeResource), [activeResource]);
-  const totalCost = isAnnual ? estimation.monthlyTotal * 12 : estimation.monthlyTotal;
+    const removeResource = (id: string) => {
+        setProjectResources(projectResources.filter(r => r.id !== id));
+    };
 
-  const formatMoney = (amount: number) => {
-    return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-  };
+    const editResource = (resource: ResourceConfig) => {
+        setActiveResource({ ...resource });
+        setProjectResources(projectResources.filter(r => r.id !== resource.id));
+        setView('editor');
+    };
 
-  return (
-    <div className="min-h-screen font-sans text-gray-900 bg-gray-50 flex flex-col">
-      
-      {/* --- Header --- */}
-      <header className="bg-aws-nav text-white shadow-lg z-50 sticky top-0">
-          <div className="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-                <div 
-                    onClick={() => setView('editor')}
-                    className="flex items-center font-bold text-xl tracking-tight text-white hover:text-aws-primary transition-colors cursor-pointer"
-                >
-                    <svg className="w-8 h-8 mr-3 text-aws-primary" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/>
-                    </svg>
-                    <span>AWS Cost Estimator</span>
-                </div>
-                
-                {/* Navigation Tabs */}
-                <div className="hidden md:flex bg-[#16191f] rounded-lg p-1 space-x-1 ml-8">
-                     <button 
-                        onClick={() => setView('editor')}
-                        className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${view === 'editor' ? 'bg-aws-primary text-white shadow' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
-                    >
-                        Service Editor
-                    </button>
-                    <button 
-                        onClick={() => setView('project')}
-                        className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center ${view === 'project' ? 'bg-aws-primary text-white shadow' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
-                    >
-                        My Estimate
-                        {projectResources.length > 0 && (
-                            <span className="ml-2 bg-white text-aws-nav text-[10px] font-bold px-1.5 rounded-full h-4 flex items-center justify-center">
-                                {projectResources.length}
-                            </span>
-                        )}
-                    </button>
-                </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-               {view === 'editor' && (
-                <div className="hidden md:flex items-center bg-[#16191f] rounded-md px-3 py-1.5 border border-gray-600 hover:border-gray-500 transition-colors">
-                   <span className="text-gray-400 text-xs mr-2 uppercase font-bold tracking-wider">Region</span>
-                   <select 
-                      className="bg-transparent text-sm font-semibold text-white focus:outline-none cursor-pointer"
-                      value={activeResource.region}
-                      onChange={(e) => setActiveResource({...activeResource, region: e.target.value as Region})}
-                   >
-                       <option value={Region.US_EAST_1}>US East (N. Virginia)</option>
-                       <option value={Region.US_WEST_2}>US West (Oregon)</option>
-                       <option value={Region.EU_CENTRAL_1}>EU (Frankfurt)</option>
-                   </select>
-               </div>
-               )}
-            </div>
-          </div>
-      </header>
+    const estimation = useMemo(() => calculateResourceCost(activeResource), [activeResource]);
+    const totalCost = isAnnual ? estimation.monthlyTotal * 12 : estimation.monthlyTotal;
 
-      {/* --- Main Content --- */}
-      <div className="flex-1 max-w-[1600px] w-full mx-auto p-6 md:p-10">
-          
-          {view === 'project' ? (
-              // --- PROJECT VIEW ---
-              <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="mb-8 flex justify-between items-end">
-                      <div>
-                        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Project Estimate</h1>
-                        <p className="text-gray-600 mt-2">Aggregate costs for all configured resources in your environment.</p>
-                      </div>
-                      <AWSButton variant="secondary" onClick={() => setView('editor')}>
-                          + Add New Resource
-                      </AWSButton>
-                  </div>
-                  <ProjectSummary 
-                    resources={projectResources} 
-                    onRemove={removeResource}
-                    onEdit={editResource}
-                  />
-              </div>
-          ) : (
-              // --- EDITOR VIEW ---
-              <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between">
-                    <div>
-                        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
-                            {getServiceDisplayName(activeResource.serviceType)}
-                        </h1>
-                        <p className="text-lg text-gray-600">
-                            {getServiceDescription(activeResource.serviceType)}
-                        </p>
-                    </div>
-                    {/* Service Switcher in Editor */}
-                    <div className="mt-4 md:mt-0 w-full md:w-72">
-                        <div className="relative">
-                            <AWSSelect
-                                value={activeResource.serviceType}
-                                onChange={(e) => handleServiceChange(e.target.value as ServiceType)}
-                                className="font-medium"
+    const formatMoney = (amount: number) => {
+        return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    };
+
+    return (
+        <div className="min-h-screen font-sans text-gray-900 bg-gray-50 flex flex-col">
+
+            {/* --- Header --- */}
+            <header className="bg-aws-nav text-white shadow-lg z-50 sticky top-0">
+                <div className="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
+                    <div className="flex items-center space-x-6">
+                        <div
+                            onClick={() => setView('editor')}
+                            className="flex items-center font-bold text-xl tracking-tight text-white hover:text-aws-primary transition-colors cursor-pointer"
+                        >
+                            <svg className="w-8 h-8 mr-3 text-aws-primary" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z" />
+                            </svg>
+                            <span>AWS Cost Estimator</span>
+                        </div>
+
+                        {/* Navigation Tabs */}
+                        <div className="hidden md:flex bg-[#16191f] rounded-lg p-1 space-x-1 ml-8">
+                            <button
+                                onClick={() => setView('editor')}
+                                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${view === 'editor' ? 'bg-aws-primary text-white shadow' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
                             >
-                                {Object.entries(SERVICE_GROUPS).map(([category, services]) => (
-                                    <optgroup key={category} label={category}>
-                                        {services.map(s => (
-                                            <option key={s} value={s}>{getServiceDisplayName(s)}</option>
-                                        ))}
-                                    </optgroup>
-                                ))}
-                            </AWSSelect>
+                                Service Editor
+                            </button>
+                            <button
+                                onClick={() => setView('project')}
+                                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center ${view === 'project' ? 'bg-aws-primary text-white shadow' : 'text-gray-400 hover:text-white hover:bg-gray-700'}`}
+                            >
+                                My Estimate
+                                {projectResources.length > 0 && (
+                                    <span className="ml-2 bg-white text-aws-nav text-[10px] font-bold px-1.5 rounded-full h-4 flex items-center justify-center">
+                                        {projectResources.length}
+                                    </span>
+                                )}
+                            </button>
                         </div>
-                        <p className="text-[10px] text-gray-400 mt-1 text-right uppercase font-semibold tracking-wider">Select a service to configure</p>
+                    </div>
+
+                    <div className="flex items-center space-x-4">
+                        {view === 'editor' && (
+                            <div className="hidden md:flex items-center bg-[#16191f] rounded-md px-3 py-1.5 border border-gray-600 hover:border-gray-500 transition-colors">
+                                <span className="text-gray-400 text-xs mr-2 uppercase font-bold tracking-wider">Region</span>
+                                <select
+                                    className="bg-transparent text-sm font-semibold text-white focus:outline-none cursor-pointer"
+                                    value={activeResource.region}
+                                    onChange={(e) => setActiveResource({ ...activeResource, region: e.target.value as Region })}
+                                >
+                                    <option value={Region.US_EAST_1}>US East (N. Virginia)</option>
+                                    <option value={Region.US_WEST_2}>US West (Oregon)</option>
+                                    <option value={Region.EU_CENTRAL_1}>EU (Frankfurt)</option>
+                                </select>
+                            </div>
+                        )}
                     </div>
                 </div>
+            </header>
 
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-                    
-                    {/* Configuration Panel (7/12) */}
-                    <div className="xl:col-span-7 space-y-8">
-                        {activeResource.serviceType === ServiceType.VPC && <VPCArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.EC2 && <EC2ArchitectureConfig config={activeResource} onUpdate={setActiveResource} availableVpcs={availableVpcs} />}
-                        {activeResource.serviceType === ServiceType.ASG && <ASGArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.ELB && <ELBArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.S3 && <S3ArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CLOUDWATCH && <CloudWatchArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.ROUTE53 && <Route53ArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.LAMBDA && <LambdaArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.RDS && <RDSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.API_GATEWAY && <ApiGatewayArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CLOUDFRONT && <CloudFrontArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.DYNAMODB && <DynamoDBArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.ACM && <ACMArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.OPENSEARCH && <OpenSearchArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CLOUDTRAIL && <CloudTrailArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.ECR && <ECRArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.ECR_PUBLIC && <ECRArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.ECS && <ECSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.EFS && <EFSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.EKS && <EKSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.ELASTICACHE && <ElastiCacheArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.WAF && <WAFArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.SYSTEMS_MANAGER && <SystemsManagerArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.SECRETS_MANAGER && <SecretsManagerArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.KMS && <KMSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CLOUDFORMATION && <CloudFormationArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.MSK && <MSKArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.SNS && <SNSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.SQS && <SQSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.SES && <SESArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.MQ && <AmazonMQArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.SHIELD && <AWSShieldArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CONFIG && <AWSConfigArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.IAM && <IAMArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.KINESIS && <KinesisArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.EVENTBRIDGE && <EventBridgeArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.ELASTIC_DR && <ElasticDRArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CODEARTIFACT && <CodeArtifactArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CODEBUILD && <CodeBuildArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CODECOMMIT && <CodeCommitArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CODEDEPLOY && <CodeDeployArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.CODEPIPELINE && <CodePipelineArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.DATA_TRANSFER && <DataTransferArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.GLOBAL_ACCELERATOR && <GlobalAcceleratorArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.FMS && <FMSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.BACKUP && <BackupArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.FSX && <FSxArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.S3_GLACIER && <GlacierArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.STEP_FUNCTIONS && <StepFunctionsArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.XRAY && <XRayArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
-                        {activeResource.serviceType === ServiceType.PINPOINT && <PinpointArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+            {/* --- Main Content --- */}
+            <div className="flex-1 max-w-[1600px] w-full mx-auto p-6 md:p-10">
+
+                {view === 'project' ? (
+                    // --- PROJECT VIEW ---
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="mb-8 flex justify-between items-end">
+                            <div>
+                                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Project Estimate</h1>
+                                <p className="text-gray-600 mt-2">Aggregate costs for all configured resources in your environment.</p>
+                            </div>
+                            <AWSButton variant="secondary" onClick={() => setView('editor')}>
+                                + Add New Resource
+                            </AWSButton>
+                        </div>
+                        <ProjectSummary
+                            resources={projectResources}
+                            onRemove={removeResource}
+                            onEdit={editResource}
+                        />
                     </div>
-
-                    {/* Estimates Panel (5/12) */}
-                    <div className="xl:col-span-5 sticky top-24 space-y-8">
-                        <div>
-                            <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <span className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3 text-sm font-extrabold">2</span>
-                                Usage Profile
-                            </h2>
-                            <div className="space-y-4">
-                                {activeResource.serviceType === ServiceType.VPC && <VPCUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.EC2 && <EC2UsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.ASG && <ASGUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.ELB && <ELBUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.S3 && <S3UsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CLOUDWATCH && <CloudWatchUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.ROUTE53 && <Route53UsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.LAMBDA && <LambdaUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.RDS && <RDSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.API_GATEWAY && <ApiGatewayUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CLOUDFRONT && <CloudFrontUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.DYNAMODB && <DynamoDBUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.ACM && <ACMUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.OPENSEARCH && <OpenSearchUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CLOUDTRAIL && <CloudTrailUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {(activeResource.serviceType === ServiceType.ECR || activeResource.serviceType === ServiceType.ECR_PUBLIC) && <ECRUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.ECS && <ECSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.EFS && <EFSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.EKS && <EKSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.ELASTICACHE && <ElastiCacheUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.WAF && <WAFUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.SYSTEMS_MANAGER && <SystemsManagerUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.SECRETS_MANAGER && <SecretsManagerUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.KMS && <KMSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CLOUDFORMATION && <CloudFormationUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.MSK && <MSKUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.SNS && <SNSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.SQS && <SQSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.SES && <SESUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.MQ && <AmazonMQUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.SHIELD && <AWSShieldUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CONFIG && <AWSConfigUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.IAM && <IAMUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.KINESIS && <KinesisUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.EVENTBRIDGE && <EventBridgeUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.ELASTIC_DR && <ElasticDRUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CODEARTIFACT && <CodeArtifactUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CODEBUILD && <CodeBuildUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CODECOMMIT && <CodeCommitUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CODEDEPLOY && <CodeDeployUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.CODEPIPELINE && <CodePipelineUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.DATA_TRANSFER && <DataTransferUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.GLOBAL_ACCELERATOR && <GlobalAcceleratorUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.FMS && <FMSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.BACKUP && <BackupUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.FSX && <FSxUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.S3_GLACIER && <GlacierUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.STEP_FUNCTIONS && <StepFunctionsUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.XRAY && <XRayUsageConfig config={activeResource} onUpdate={setActiveResource} />}
-                                {activeResource.serviceType === ServiceType.PINPOINT && <PinpointUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                ) : (
+                    // --- EDITOR VIEW ---
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between">
+                            <div>
+                                <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
+                                    {getServiceDisplayName(activeResource.serviceType)}
+                                </h1>
+                                <p className="text-lg text-gray-600">
+                                    {getServiceDescription(activeResource.serviceType)}
+                                </p>
+                            </div>
+                            {/* Service Switcher in Editor */}
+                            <div className="mt-4 md:mt-0 w-full md:w-72">
+                                <div className="relative">
+                                    <AWSSelect
+                                        value={activeResource.serviceType}
+                                        onChange={(e) => handleServiceChange(e.target.value as ServiceType)}
+                                        className="font-medium"
+                                    >
+                                        {Object.entries(SERVICE_GROUPS).map(([category, services]) => (
+                                            <optgroup key={category} label={category}>
+                                                {services.map(s => (
+                                                    <option key={s} value={s}>{getServiceDisplayName(s)}</option>
+                                                ))}
+                                            </optgroup>
+                                        ))}
+                                    </AWSSelect>
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-1 text-right uppercase font-semibold tracking-wider">Select a service to configure</p>
                             </div>
                         </div>
 
-                        {/* Cost Card */}
-                        <div className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden ring-1 ring-black/5">
-                            <div className="bg-gradient-to-r from-[#232f3e] to-[#2c3e50] p-6 text-white">
-                                <div className="flex justify-between items-center mb-1">
-                                    <h3 className="text-lg font-bold">Estimated Cost</h3>
-                                    <div className="bg-white/10 p-1 rounded-lg flex text-xs font-bold backdrop-blur-sm">
-                                        <button 
-                                            className={`px-3 py-1.5 rounded-md transition-all ${!isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-300 hover:text-white'}`}
-                                            onClick={() => setIsAnnual(false)}
-                                        >Monthly</button>
-                                        <button 
-                                            className={`px-3 py-1.5 rounded-md transition-all ${isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-300 hover:text-white'}`}
-                                            onClick={() => setIsAnnual(true)}
-                                        >Annual</button>
-                                    </div>
-                                </div>
+                        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+
+                            {/* Configuration Panel (7/12) */}
+                            <div className="xl:col-span-7 space-y-8">
+                                {activeResource.serviceType === ServiceType.VPC && <VPCArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.EC2 && <EC2ArchitectureConfig config={activeResource} onUpdate={setActiveResource} availableVpcs={availableVpcs} />}
+                                {activeResource.serviceType === ServiceType.ASG && <ASGArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.ELB && <ELBArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.S3 && <S3ArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CLOUDWATCH && <CloudWatchArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.ROUTE53 && <Route53ArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.LAMBDA && <LambdaArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.RDS && <RDSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.API_GATEWAY && <ApiGatewayArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CLOUDFRONT && <CloudFrontArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.DYNAMODB && <DynamoDBArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.ACM && <ACMArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.OPENSEARCH && <OpenSearchArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CLOUDTRAIL && <CloudTrailArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.ECR && <ECRArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.ECR_PUBLIC && <ECRArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.ECS && <ECSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.EFS && <EFSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.EKS && <EKSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.ELASTICACHE && <ElastiCacheArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.WAF && <WAFArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.SYSTEMS_MANAGER && <SystemsManagerArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.SECRETS_MANAGER && <SecretsManagerArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.KMS && <KMSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CLOUDFORMATION && <CloudFormationArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.MSK && <MSKArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.SNS && <SNSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.SQS && <SQSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.SES && <SESArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.MQ && <AmazonMQArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.SHIELD && <AWSShieldArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CONFIG && <AWSConfigArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.IAM && <IAMArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.KINESIS && <KinesisArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.EVENTBRIDGE && <EventBridgeArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.ELASTIC_DR && <ElasticDRArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CODEARTIFACT && <CodeArtifactArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CODEBUILD && <CodeBuildArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CODECOMMIT && <CodeCommitArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CODEDEPLOY && <CodeDeployArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.CODEPIPELINE && <CodePipelineArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.DATA_TRANSFER && <DataTransferArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.GLOBAL_ACCELERATOR && <GlobalAcceleratorArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.FMS && <FMSArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.BACKUP && <BackupArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.FSX && <FSxArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.S3_GLACIER && <GlacierArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.STEP_FUNCTIONS && <StepFunctionsArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.XRAY && <XRayArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
+                                {activeResource.serviceType === ServiceType.PINPOINT && <PinpointArchitectureConfig config={activeResource} onUpdate={setActiveResource} />}
                             </div>
 
-                            <div className="p-6 md:p-8">
-                                <div className="flex items-baseline justify-center mb-6">
-                                    <span className="text-5xl font-extrabold text-gray-900 tracking-tight">
-                                        {formatMoney(totalCost)}
-                                    </span>
-                                    <span className="text-gray-500 font-medium ml-2">
-                                        / {isAnnual ? 'year' : 'month'}
-                                    </span>
+                            {/* Estimates Panel (5/12) */}
+                            <div className="xl:col-span-5 sticky top-24 space-y-8">
+                                <div>
+                                    <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                                        <span className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3 text-sm font-extrabold">2</span>
+                                        Usage Profile
+                                    </h2>
+                                    <div className="space-y-4">
+                                        {activeResource.serviceType === ServiceType.VPC && <VPCUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.EC2 && <EC2UsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.ASG && <ASGUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.ELB && <ELBUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.S3 && <S3UsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CLOUDWATCH && <CloudWatchUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.ROUTE53 && <Route53UsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.LAMBDA && <LambdaUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.RDS && <RDSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.API_GATEWAY && <ApiGatewayUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CLOUDFRONT && <CloudFrontUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.DYNAMODB && <DynamoDBUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.ACM && <ACMUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.OPENSEARCH && <OpenSearchUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CLOUDTRAIL && <CloudTrailUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {(activeResource.serviceType === ServiceType.ECR || activeResource.serviceType === ServiceType.ECR_PUBLIC) && <ECRUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.ECS && <ECSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.EFS && <EFSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.EKS && <EKSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.ELASTICACHE && <ElastiCacheUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.WAF && <WAFUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.SYSTEMS_MANAGER && <SystemsManagerUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.SECRETS_MANAGER && <SecretsManagerUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.KMS && <KMSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CLOUDFORMATION && <CloudFormationUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.MSK && <MSKUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.SNS && <SNSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.SQS && <SQSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.SES && <SESUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.MQ && <AmazonMQUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.SHIELD && <AWSShieldUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CONFIG && <AWSConfigUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.IAM && <IAMUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.KINESIS && <KinesisUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.EVENTBRIDGE && <EventBridgeUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.ELASTIC_DR && <ElasticDRUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CODEARTIFACT && <CodeArtifactUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CODEBUILD && <CodeBuildUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CODECOMMIT && <CodeCommitUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CODEDEPLOY && <CodeDeployUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.CODEPIPELINE && <CodePipelineUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.DATA_TRANSFER && <DataTransferUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.GLOBAL_ACCELERATOR && <GlobalAcceleratorUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.FMS && <FMSUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.BACKUP && <BackupUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.FSX && <FSxUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.S3_GLACIER && <GlacierUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.STEP_FUNCTIONS && <StepFunctionsUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.XRAY && <XRayUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                        {activeResource.serviceType === ServiceType.PINPOINT && <PinpointUsageConfig config={activeResource} onUpdate={setActiveResource} />}
+                                    </div>
                                 </div>
 
-                                <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-100">
-                                    <div className="space-y-2">
-                                        {estimation.breakdown.slice(0, 3).map((item, i) => (
-                                            <div key={i} className="flex justify-between text-sm">
-                                                <span className="text-gray-600">{item.label}</span>
-                                                <span className="font-semibold text-gray-900">{formatMoney(isAnnual ? item.total * 12 : item.total)}</span>
+                                {/* Cost Card */}
+                                <div className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden ring-1 ring-black/5">
+                                    <div className="bg-gradient-to-r from-[#232f3e] to-[#2c3e50] p-6 text-white">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <h3 className="text-lg font-bold">Estimated Cost</h3>
+                                            <div className="bg-white/10 p-1 rounded-lg flex text-xs font-bold backdrop-blur-sm">
+                                                <button
+                                                    className={`px-3 py-1.5 rounded-md transition-all ${!isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-300 hover:text-white'}`}
+                                                    onClick={() => setIsAnnual(false)}
+                                                >Monthly</button>
+                                                <button
+                                                    className={`px-3 py-1.5 rounded-md transition-all ${isAnnual ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-300 hover:text-white'}`}
+                                                    onClick={() => setIsAnnual(true)}
+                                                >Annual</button>
                                             </div>
-                                        ))}
+                                        </div>
                                     </div>
-                                </div>
-                                
-                                <div className="space-y-3">
-                                    <AWSButton fullWidth onClick={addToProject}>
-                                        Add to Estimate Report
-                                    </AWSButton>
-                                    <p className="text-xs text-center text-gray-500 pt-2">
-                                        Adds this configuration to your project summary.
-                                    </p>
+
+                                    <div className="p-6 md:p-8">
+                                        <div className="flex items-baseline justify-center mb-6">
+                                            <span className="text-5xl font-extrabold text-gray-900 tracking-tight">
+                                                {formatMoney(totalCost)}
+                                            </span>
+                                            <span className="text-gray-500 font-medium ml-2">
+                                                / {isAnnual ? 'year' : 'month'}
+                                            </span>
+                                        </div>
+
+                                        <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-100">
+                                            <div className="space-y-2">
+                                                {estimation.breakdown.slice(0, 3).map((item, i) => (
+                                                    <div key={i} className="flex justify-between text-sm">
+                                                        <span className="text-gray-600">{item.label}</span>
+                                                        <span className="font-semibold text-gray-900">{formatMoney(isAnnual ? item.total * 12 : item.total)}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <AWSButton fullWidth onClick={addToProject}>
+                                                Add to Estimate Report
+                                            </AWSButton>
+                                            <p className="text-xs text-center text-gray-500 pt-2">
+                                                Adds this configuration to your project summary.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                )}
+            </div>
+
+            {/* Footer */}
+            <footer className="mt-auto py-8 bg-white border-t border-gray-200">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <p className="text-sm text-gray-500 font-medium mb-2">AWS Cost Estimator &copy; 2025</p>
                 </div>
-              </div>
-          )}
-      </div>
-      
-      {/* Footer */}
-      <footer className="mt-auto py-8 bg-white border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-             <p className="text-sm text-gray-500 font-medium mb-2">AWS Cost Estimator &copy; 2025</p>
-          </div>
-      </footer>
-    </div>
-  );
+            </footer>
+        </div>
+    );
 };
 
 export default App;
