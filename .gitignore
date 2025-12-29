@@ -1,0 +1,279 @@
+# ============================================
+# Dependencies
+# ============================================
+node_modules/
+jspm_packages/
+bower_components/
+
+# ============================================
+# Build Outputs
+# ============================================
+dist/
+dist-ssr/
+build/
+out/
+*.tsbuildinfo
+
+# ============================================
+# Environment Variables & Secrets
+# ============================================
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+.env*.local
+
+# API Keys and Secrets
+*.key
+*.pem
+secrets/
+.secrets
+
+# ============================================
+# Logs
+# ============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================
+# Testing & Coverage
+# ============================================
+coverage/
+*.lcov
+.nyc_output/
+.jest-cache/
+test-results/
+playwright-report/
+e2e-results/
+
+# ============================================
+# Cache & Temporary Files
+# ============================================
+.cache/
+.temp/
+.tmp/
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================
+# Editor & IDE
+# ============================================
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains IDEs (WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Visual Studio
+.vs/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.user
+
+# ============================================
+# Operating System
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# Package Managers
+# ============================================
+# npm
+package-lock.json
+npm-debug.log*
+.npm
+
+# yarn
+yarn.lock
+yarn-debug.log*
+yarn-error.log*
+.yarn/
+.yarn-integrity
+.pnp.*
+
+# pnpm
+pnpm-lock.yaml
+pnpm-debug.log*
+.pnpm-store/
+
+# ============================================
+# Vite Specific
+# ============================================
+*.local
+vite.config.*.timestamp-*
+
+# ============================================
+# TypeScript
+# ============================================
+*.tsbuildinfo
+.tsbuildinfo
+
+# ============================================
+# React & Frontend
+# ============================================
+.eslintcache
+.stylelintcache
+
+# ============================================
+# Miscellaneous
+# ============================================
+# Debug files
+*.pid
+*.seed
+*.pid.lock
+
+# Runtime data
+pids/
+lib-cov/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.parcel-cache
+
+# Next.js (if you ever migrate)
+.next/
+
+# Nuxt.js (if you ever use)
+.nuxt/
+
+# Gatsby files
+.cache/
+public/
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Storybook
+storybook-static/
+
+# ============================================
+# Project Specific
+# ============================================
+# AWS credentials (should never be committed)
+.aws/
+aws-credentials.json
+credentials.json
+
+# Metadata or generated files
+metadata.json.backup
+*.backup
+
+# Combined code files
+combined-code.txt
+combinex-code.txt
+
+# Documentation builds
+docs/build/
+docs/.vitepress/dist/
+
+# Local development
+.local/
+local/
